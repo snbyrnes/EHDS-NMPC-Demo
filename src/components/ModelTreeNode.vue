@@ -29,6 +29,15 @@ function formatTypes(types: string[]): string {
     .join(' | ');
 }
 
+function getValidationDot(node: EHDSTreeNode) {
+  if (node.notApplicable) return null;
+  if (!node.populatedValue) return null;
+  const v = node.populatedValue.validation;
+  if (v === 'valid') return { color: 'bg-emerald-500', title: 'Populated · valid binding' };
+  if (v === 'mismatch') return { color: 'bg-amber-400', title: 'Populated · binding mismatch' };
+  return { color: 'bg-slate-400', title: 'Populated · binding unknown' };
+}
+
 function getBindingStyle(node: EHDSTreeNode) {
   const cat = classifyBinding(node.binding?.description);
   if (!cat) return null;
@@ -63,9 +72,16 @@ function getBindingStyle(node: EHDSTreeNode) {
       </template>
     </span>
 
+    <!-- Validation status dot -->
+    <span
+      v-if="getValidationDot(node)"
+      class="w-2 h-2 rounded-full shrink-0 mt-1"
+      :class="getValidationDot(node)!.color"
+      :title="getValidationDot(node)!.title"
+    ></span>
+
     <!-- Element name -->
-    <span class="font-mono text-sm font-medium text-slate-800 shrink-0" :title="node.definition">
-      {{ node.name }}
+    <span class="font-mono text-sm font-medium text-slate-800 shrink-0" :title="node.definition">      {{ node.name }}
     </span>
 
     <!-- Cardinality badge -->

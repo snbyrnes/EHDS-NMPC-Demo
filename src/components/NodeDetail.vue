@@ -40,7 +40,7 @@ const bindingInfo = computed(() => {
         </button>
       </div>
 
-      <div class="px-4 py-3 space-y-3 max-h-64 overflow-y-auto text-sm">
+      <div class="px-4 py-3 space-y-3 text-sm">
         <!-- Path -->
         <div>
           <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Path</span>
@@ -116,6 +116,16 @@ const bindingInfo = computed(() => {
 </template>
 
 <style scoped>
+.slide-in-enter-active,
+.slide-in-leave-active {
+  transition: all 0.2s ease;
+}
+.slide-in-enter-from,
+.slide-in-leave-to {
+  opacity: 0;
+  transform: translateX(12px);
+}
+/* Mobile: keep slide-up behaviour */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.2s ease;

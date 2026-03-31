@@ -57,13 +57,30 @@ const rightTab = ref<'json' | 'raw'>('json');
           </button>
         </div>
 
-        <!-- Tree (visible on large screens always, on mobile only when tab active) -->
-        <div class="flex-1 min-h-0 overflow-hidden" :class="{ 'hidden lg:block': activeTab !== 'tree' }">
-          <ModelTree :roots="store.treeRoots" />
+        <!-- Tree + NodeDetail side panel (visible on large screens always, on mobile only when tab active) -->
+        <div
+          class="flex-1 min-h-0 flex gap-3"
+          :class="{ 'hidden lg:flex': activeTab !== 'tree' }"
+        >
+          <div class="flex-1 min-h-0 overflow-hidden">
+            <ModelTree :roots="store.treeRoots" />
+          </div>
+
+          <!-- NodeDetail: persistent side panel on desktop -->
+          <Transition name="slide-in">
+            <div
+              v-if="store.inspectedNode"
+              class="hidden lg:block lg:w-80 shrink-0 min-h-0 overflow-y-auto"
+            >
+              <NodeDetail />
+            </div>
+          </Transition>
         </div>
 
-        <!-- Node detail panel (below tree) -->
-        <NodeDetail />
+        <!-- NodeDetail: below tree on mobile -->
+        <div class="lg:hidden" :class="{ 'hidden': activeTab !== 'tree' }">
+          <NodeDetail />
+        </div>
       </div>
 
       <!-- Right panel: JSON output / Raw response tabbed -->
