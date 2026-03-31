@@ -14,6 +14,14 @@ let compareDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 const compareResults = ref<NMPCSearchResult[]>([]);
 const isSearchingCompare = ref(false);
 
+watch(() => store.prescribingMode, () => {
+  store.searchResults = [];
+  store.searchError = '';
+  if (query.value.trim()) {
+    store.searchMedications(query.value);
+  }
+});
+
 watch(query, (val) => {
   if (debounceTimer) clearTimeout(debounceTimer);
   if (!val.trim()) {
@@ -82,6 +90,23 @@ async function copyDeepLink() {
   <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
     <!-- Search input -->
     <div class="px-4 py-3 border-b border-slate-200">
+      <!-- Prescribing mode toggle -->
+      <div class="flex items-center gap-1 mb-2 bg-slate-100 rounded-md p-0.5 w-fit">
+        <button
+          class="px-3 py-1 text-xs font-medium rounded transition-colors"
+          :class="store.prescribingMode === 'virtual' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+          @click="store.prescribingMode = 'virtual'"
+        >
+          Virtual Prescribing
+        </button>
+        <button
+          class="px-3 py-1 text-xs font-medium rounded transition-colors"
+          :class="store.prescribingMode === 'actual' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+          @click="store.prescribingMode = 'actual'"
+        >
+          Actual Prescribing
+        </button>
+      </div>
       <div class="relative">
         <svg
           class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"

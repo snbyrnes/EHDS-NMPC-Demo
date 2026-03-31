@@ -44,6 +44,13 @@ export const useAppStore = defineStore('app', () => {
   // Settings drawer
   const showSettings = ref(false);
 
+  // Prescribing mode
+  const prescribingMode = ref<'virtual' | 'actual'>('virtual');
+  const PRESCRIBING_REFSETS: Record<'virtual' | 'actual', string> = {
+    virtual: '660371000220109',
+    actual: '660381000220107',
+  };
+
   // Inspected node (for detail panel)
   const inspectedNode = ref<EHDSTreeNode | null>(null);
 
@@ -112,7 +119,7 @@ export const useAppStore = defineStore('app', () => {
     isSearching.value = true;
     searchError.value = '';
     try {
-      searchResults.value = await client.searchMedications(filter);
+      searchResults.value = await client.searchMedications(filter, 20, PRESCRIBING_REFSETS[prescribingMode.value]);
     } catch (e) {
       searchError.value = e instanceof Error ? e.message : 'Search failed';
       searchResults.value = [];
@@ -123,7 +130,7 @@ export const useAppStore = defineStore('app', () => {
 
   async function searchMedicationsRaw(filter: string): Promise<import('../types/ehds').NMPCSearchResult[]> {
     if (!client || !filter.trim()) return [];
-    return client.searchMedications(filter);
+    return client.searchMedications(filter, 20, PRESCRIBING_REFSETS[prescribingMode.value]);
   }
 
   async function selectMedication(medication: NMPCSearchResult) {
@@ -490,6 +497,7 @@ export const useAppStore = defineStore('app', () => {
     comparedTreeRoots,
     comparedRawLookup,
     isLoadingComparison,
+    prescribingMode,
     // Actions
     connect,
     disconnect,

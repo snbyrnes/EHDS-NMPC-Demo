@@ -158,9 +158,12 @@ export class NMPCClient {
     };
   }
 
-  async searchMedications(filter: string, count = 20): Promise<NMPCSearchResult[]> {
+  async searchMedications(filter: string, count = 20, refset?: string): Promise<NMPCSearchResult[]> {
+    const vsUrl = refset
+      ? `http://snomed.info/sct?fhir_vs=ecl/^ ${refset}`
+      : 'http://snomed.info/sct?fhir_vs=isa/763158003';
     const data = await this.request('/ValueSet/$expand', {
-      url: 'http://snomed.info/sct?fhir_vs=isa/763158003',
+      url: vsUrl,
       filter,
       count: String(count),
       includeDesignations: 'true',
